@@ -6,8 +6,8 @@ import java.text.DecimalFormat;
 import java.util.*;
 
 class MenuItem {
-    private String name;
-    private double price;
+    private final String name;
+    private final double price;
 
     public MenuItem(String name, double price) {
         this.name = name;
@@ -81,13 +81,7 @@ public class BinarFud {
     private static Scanner inputScanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        List<MenuItem> menuItems = new ArrayList<>();
-        menuItems.add(new MenuItem("Nasi Goreng", 15000));
-        menuItems.add(new MenuItem("Mie Goreng", 13000));
-        menuItems.add(new MenuItem("Nasi + Ayam", 18000));
-        menuItems.add(new MenuItem("Es Teh manis", 3000));
-        menuItems.add(new MenuItem("Es Jeruk", 5000));
-
+        List<MenuItem> menuItems = initializeMenuItems();
         Order order = new Order();
 
         while (true) {
@@ -107,19 +101,22 @@ public class BinarFud {
                     order.addItem(new OrderItem(menuItem, quantity));
                 }
             } else {
-                System.out.println("============================");
-                System.out.println("Mohon masukan input pilihan anda");
-                System.out.println("============================");
-                System.out.print("(Y) untuk lanjut, (n) untuk keluar\n=> ");
-                String input = inputScanner.next();
-                if (input.equalsIgnoreCase("n")) {
-                    break;
-                }
+                handleInvalidInput();
             }
         }
     }
 
-    public static void displayMainMenu(List<MenuItem> menuItems) {
+    private static List<MenuItem> initializeMenuItems() {
+        List<MenuItem> menuItems = new ArrayList<>();
+        menuItems.add(new MenuItem("Nasi Goreng", 15000));
+        menuItems.add(new MenuItem("Mie Goreng", 13000));
+        menuItems.add(new MenuItem("Nasi + Ayam", 18000));
+        menuItems.add(new MenuItem("Es Teh manis", 3000));
+        menuItems.add(new MenuItem("Es Jeruk", 5000));
+        return menuItems;
+    }
+
+    private static void displayMainMenu(List<MenuItem> menuItems) {
         System.out.println("==========================");
         System.out.println("Selamat datang di Binarfud");
         System.out.println("==========================");
@@ -132,7 +129,7 @@ public class BinarFud {
         System.out.println("0. Keluar Aplikasi");
     }
 
-    public static int getQuantity(MenuItem menuItem) {
+    private static int getQuantity(MenuItem menuItem) {
         System.out.println("========================");
         System.out.println("Berapa pesanan anda");
         System.out.println("========================");
@@ -141,19 +138,12 @@ public class BinarFud {
         System.out.println("(input 0 untuk kembali)");
         int quantity = getIntInput("qty => ");
         if (quantity < 0) {
-            System.out.println("============================");
-            System.out.println("Mohon masukan input pilihan anda");
-            System.out.println("============================");
-            System.out.print("(Y) untuk lanjut, (n) untuk keluar\n=> ");
-            String input = inputScanner.next();
-            if (input.equalsIgnoreCase("n")) {
-                System.exit(0);
-            }
+            handleInvalidInput();
         }
         return quantity;
     }
 
-    public static int getIntInput(String prompt) {
+    private static int getIntInput(String prompt) {
         while (true) {
             try {
                 System.out.print(prompt);
@@ -165,7 +155,18 @@ public class BinarFud {
         }
     }
 
-    public static void confirmOrder(Order order) {
+    private static void handleInvalidInput() {
+        System.out.println("============================");
+        System.out.println("Mohon masukan input pilihan anda");
+        System.out.println("============================");
+        System.out.print("(Y) untuk lanjut, (n) untuk keluar\n=> ");
+        String input = inputScanner.next();
+        if (input.equalsIgnoreCase("n")) {
+            System.exit(0);
+        }
+    }
+
+    private static void confirmOrder(Order order) {
         System.out.println("=================================");
         System.out.println("Konfirmasi & Pembayaran");
         System.out.println("================================");
@@ -193,7 +194,7 @@ public class BinarFud {
         }
     }
 
-    public static void generateReceipt(Order order) {
+    private static void generateReceipt(Order order) {
         try (FileWriter writer = new FileWriter("receipt.txt")) {
             DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
             writer.write("=================================\n");
